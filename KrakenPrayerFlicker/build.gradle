@@ -39,7 +39,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 jar {
-    archiveFileName = 'kraken-prayer-flicker.jar'
+    archiveFileName = 'VJPrayerFlicker-kraken-client.jar'
 }
 
 // Vanilla RuneLite sideload of the published Java 17 kraken-api binary.
@@ -49,7 +49,7 @@ tasks.register('shadedJar', Jar) {
     group = 'build'
     description = 'Bundle kraken-api for ~/.runelite/sideloaded-plugins'
     dependsOn tasks.named('classes')
-    archiveFileName = 'kraken-prayer-flicker-runelite.jar'
+    archiveFileName = 'VJPrayerFlicker-java17.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     // Published HooksLoader and GameHooks name LoginHooks, and ClickScheduler names
     // the Jagex account-hash interface. The Java 11 compile of those three classes
@@ -107,7 +107,7 @@ tasks.register('shadedJarJava11', Jar) {
     group = 'build'
     description = 'Java 11 sideload jar for ~/.runelite/sideloaded-plugins'
     dependsOn tasks.named('compileJava11')
-    archiveFileName = 'kraken-prayer-flicker-runelite-java11.jar'
+    archiveFileName = 'VJPrayerFlicker.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from java11PluginClasses
     from project(':kraken-api-java11').sourceSets.main.output

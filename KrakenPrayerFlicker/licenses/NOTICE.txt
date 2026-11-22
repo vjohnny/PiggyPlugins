@@ -1,4 +1,4 @@
-kraken-prayer-flicker-runelite.jar
+VJPrayerFlicker-java17.jar
 
 This jar bundles the Kraken Prayer Flicker plugin with Kraken API 5.4.1 so it can be
 sideloaded in vanilla RuneLite. Kraken API is loaded from its own hooks.json resource.
