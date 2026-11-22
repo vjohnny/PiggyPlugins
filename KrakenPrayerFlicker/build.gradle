@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'com.krakenplugins.plugin' version '0.1.1'
+}
+
+// Standalone from the Java 11 PiggyPlugins build. The Kraken client provides
+// RuneLite and kraken-api at runtime, so this jar is only the plugin classes.
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+repositories {
+    maven { url = 'https://repo.runelite.net' }
+    maven { url = 'https://repo.kraken-plugins.com' }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'net.runelite:client:latest.release'
+    compileOnly 'com.github.kraken:kraken-api:5.4.1'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 17
+}
+
+jar {
+    archiveFileName = 'kraken-prayer-flicker.jar'
+}
