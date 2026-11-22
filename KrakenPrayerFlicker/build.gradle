@@ -42,9 +42,9 @@ jar {
     archiveFileName = 'kraken-prayer-flicker.jar'
 }
 
-// Vanilla RuneLite sideload. The official launcher JRE is Temurin 17, which can
-// load this Java 17 bytecode. shortestpath is a second plugin embedded in the
-// API jar and is left out so sideload does not start it.
+// Vanilla RuneLite sideload of the published Java 17 kraken-api binary.
+// shortestpath is a second plugin embedded in the API jar and is left out so
+// sideload does not start it. This jar does not load on a Java 11 JRE.
 tasks.register('shadedJar', Jar) {
     group = 'build'
     description = 'Bundle kraken-api for ~/.runelite/sideloaded-plugins'
@@ -65,6 +65,67 @@ tasks.register('shadedJar', Jar) {
     manifest {
         attributes(
                 'Kraken-API': '5.4.1',
+                'Automatic-Module-Name': 'com.piggyplugins.krakenprayerflicker'
+        )
+    }
+}
+
+def java11PluginClasses = layout.buildDirectory.dir('classes/java11-plugin')
+
+// Same plugin sources, emitted as class version 55, compiled against the
+// Java 11 kraken-api classes rather than the published version 61 jar.
+tasks.register('compileJava11', JavaCompile) {
+    group = 'build'
+    description = 'Compile KrakenPrayerFlicker with --release 11'
+    dependsOn ':kraken-api-java11:classes'
+    source = sourceSets.main.java
+    classpath = files(project(':kraken-api-java11').sourceSets.main.output) +
+            sourceSets.main.compileClasspath.filter { !it.name.startsWith('kraken-api-') }
+    destinationDirectory = java11PluginClasses
+    options.encoding = 'UTF-8'
+    options.release = 11
+    options.annotationProcessorPath = configurations.annotationProcessor
+}
+
+tasks.register('shadedJarJava11', Jar) {
+    group = 'build'
+    description = 'Java 11 sideload jar for ~/.runelite/sideloaded-plugins'
+    dependsOn tasks.named('compileJava11')
+    archiveFileName = 'kraken-prayer-flicker-runelite-java11.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from java11PluginClasses
+    from project(':kraken-api-java11').sourceSets.main.output
+    // shortest-path is shaded into upstream kraken-api for walker data files.
+    // Its classes stay out: ShortestPathPlugin would sideload beside this plugin.
+    // Those class files are already version 55.
+    def shortestPathJar = project(':kraken-api-java11').configurations.compileClasspath.find {
+        it.name.contains('shortest-path')
+    }
+    if (shortestPathJar == null) {
+        throw new GradleException('shortest-path was not on the kraken-api-java11 compile classpath')
+    }
+    from(zipTree(shortestPathJar)) {
+        exclude '**/*.class'
+        exclude 'META-INF/**'
+    }
+    exclude 'kraken.png'
+    from('licenses') {
+        into 'META-INF/licenses'
+        exclude 'NOTICE.txt'
+        exclude 'NOTICE-java11.txt'
+    }
+    from('licenses/NOTICE-java11.txt') {
+        into 'META-INF/licenses'
+        rename { 'NOTICE.txt' }
+    }
+    exclude 'shortestpath/**'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    manifest {
+        attributes(
+                'Kraken-API': '5.4.1',
+                'Kraken-API-Bytecode': '55',
                 'Automatic-Module-Name': 'com.piggyplugins.krakenprayerflicker'
         )
     }

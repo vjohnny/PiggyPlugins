@@ -6,3 +6,5 @@ pluginManagement {
 }
 
 rootProject.name = 'kraken-prayer-flicker'
+
+include 'kraken-api-java11'

@@ -1,0 +1,18 @@
+--- a/build.gradle	2026-11-22 05:05:38.287903001 +0000
++++ b/build.gradle	2026-11-22 05:05:38.287903001 +0000
+@@ -96,9 +96,12 @@
+ java {
+     withSourcesJar()
+     withJavadocJar()
+-    toolchain {
+-        languageVersion = JavaLanguageVersion.of(17)
+-    }
++}
++
++// PiggyPlugins Java 11 port: upstream tag 5.4.1 targets a Java 17 toolchain.
++// No Java source files are changed. Class files are emitted as version 55.
++tasks.withType(JavaCompile).configureEach {
++    options.release = 11
+ }
+ 
+ jar {

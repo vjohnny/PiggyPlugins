@@ -1,0 +1,33 @@
+kraken-prayer-flicker-runelite-java11.jar
+
+This jar bundles the Kraken Prayer Flicker plugin with Kraken API 5.4.1, compiled
+for Java 11 (class file version 55), so it can be sideloaded in vanilla RuneLite
+running on a Java 11 JRE. Kraken API is loaded from its own hooks.json resource.
+No hook names were rewritten. hooks.json is the unmodified 5.4.1 resource.
+
+Modifications to Kraken API 5.4.1 (GNU GPL v3, section 5):
+The Java sources are the unmodified files from tag 5.4.1
+(https://github.com/Kraken-Plugins/kraken-api/tree/5.4.1). They are vendored at
+KrakenPrayerFlicker/kraken-api-java11/src. The only change from the upstream build
+is how those sources are compiled: javac --release 11 instead of the upstream Java
+17 toolchain. That patch is KrakenPrayerFlicker/kraken-api-5.4.1-java11.patch.
+No statements, hook names, or resources were edited. The published 5.4.1 jar is
+Java 17 bytecode (class file version 61) and does not load on Java 11.
+
+Kraken API 5.4.1
+Copyright the Kraken API authors
+https://github.com/Kraken-Plugins/kraken-api/tree/5.4.1
+License: GNU General Public License v3.0 (see kraken-api-GPL-3.0.txt).
+The published Maven POM also says MIT; the source repository LICENSE at tag 5.4.1 is GPL-3.0.
+Corresponding source for this binary: the vendored tree above, which matches tag 5.4.1,
+plus kraken-api-5.4.1-java11.patch. Upstream tarball:
+https://github.com/Kraken-Plugins/kraken-api/archive/refs/tags/5.4.1.tar.gz
+
+PiggyPlugins Kraken Prayer Flicker
+Original quick-prayer behavior by Ethan Vann, maintained by Piggy Plugins.
+The plugin classes in this jar were compiled with javac --release 11.
+PiggyPlugins is licensed under the GNU Affero General Public License v3.0
+(see piggyplugins-AGPL-3.0.txt). GPL-3 section 13 permits combining that work
+with this AGPL-3 program.
+
+RuneLite client classes are not bundled. They are provided by the running client.
