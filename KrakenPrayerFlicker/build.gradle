@@ -16,11 +16,21 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    krakenBundle
+}
+
 dependencies {
     compileOnly 'net.runelite:client:latest.release'
     compileOnly 'com.github.kraken:kraken-api:5.4.1'
     compileOnly 'org.projectlombok:lombok:1.18.36'
     annotationProcessor 'org.projectlombok:lombok:1.18.36'
+
+    // Same API jar, unpacked into the vanilla sideload jar. Not transitive:
+    // RuneLite already provides Guice, Gson, Guava, SLF4J and Logback.
+    krakenBundle('com.github.kraken:kraken-api:5.4.1') {
+        transitive = false
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -30,4 +40,32 @@ tasks.withType(JavaCompile).configureEach {
 
 jar {
     archiveFileName = 'kraken-prayer-flicker.jar'
+}
+
+// Vanilla RuneLite sideload. The official launcher JRE is Temurin 17, which can
+// load this Java 17 bytecode. shortestpath is a second plugin embedded in the
+// API jar and is left out so sideload does not start it.
+tasks.register('shadedJar', Jar) {
+    group = 'build'
+    description = 'Bundle kraken-api for ~/.runelite/sideloaded-plugins'
+    dependsOn tasks.named('classes')
+    archiveFileName = 'kraken-prayer-flicker-runelite.jar'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from sourceSets.main.output
+    from {
+        configurations.krakenBundle.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    from('licenses') {
+        into 'META-INF/licenses'
+    }
+    exclude 'shortestpath/**'
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+    manifest {
+        attributes(
+                'Kraken-API': '5.4.1',
+                'Automatic-Module-Name': 'com.piggyplugins.krakenprayerflicker'
+        )
+    }
 }

@@ -1,0 +1,20 @@
+kraken-prayer-flicker-runelite.jar
+
+This jar bundles the Kraken Prayer Flicker plugin with Kraken API 5.4.1 so it can be
+sideloaded in vanilla RuneLite. Kraken API is loaded from its own hooks.json resource.
+No hook names were rewritten.
+
+Kraken API 5.4.1
+Copyright the Kraken API authors
+https://github.com/Kraken-Plugins/kraken-api/tree/5.4.1
+License: GNU General Public License v3.0 (see kraken-api-GPL-3.0.txt).
+The published Maven POM also says MIT; the source repository LICENSE at tag 5.4.1 is GPL-3.0.
+Corresponding source: https://github.com/Kraken-Plugins/kraken-api/archive/refs/tags/5.4.1.tar.gz
+
+PiggyPlugins Kraken Prayer Flicker
+Original quick-prayer behavior by Ethan Vann, maintained by Piggy Plugins.
+PiggyPlugins is licensed under the GNU Affero General Public License v3.0
+(see piggyplugins-AGPL-3.0.txt). GPL-3 section 13 permits combining that work
+with this AGPL-3 program.
+
+RuneLite client classes are not bundled. They are provided by the running client.
