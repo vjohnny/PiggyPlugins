@@ -4,6 +4,12 @@ This jar bundles the Kraken Prayer Flicker plugin with Kraken API 5.4.1 so it ca
 sideloaded in vanilla RuneLite. Kraken API is loaded from its own hooks.json resource.
 No hook names were rewritten.
 
+Modifications (GNU GPL v3, section 5): the login package, the login hook class,
+and the break-handler package are not included. They read the RuneLite credentials
+file or exist only to call that code. GameHooks, HooksLoader, and ClickScheduler in
+this jar are the Java 11 builds from KrakenPrayerFlicker/kraken-api-java11, which
+drop those references. See kraken-api-5.4.1-java11.patch. hooks.json is unmodified.
+
 Kraken API 5.4.1
 Copyright the Kraken API authors
 https://github.com/Kraken-Plugins/kraken-api/tree/5.4.1

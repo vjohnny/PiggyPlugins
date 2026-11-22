@@ -51,12 +51,28 @@ tasks.register('shadedJar', Jar) {
     dependsOn tasks.named('classes')
     archiveFileName = 'kraken-prayer-flicker-runelite.jar'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Published HooksLoader and GameHooks name LoginHooks, and ClickScheduler names
+    // the Jagex account-hash interface. The Java 11 compile of those three classes
+    // drops both. They replace the published copies. Class version 55 loads on Java 17.
+    dependsOn ':kraken-api-java11:classes'
+    def patchedClasses = project(':kraken-api-java11').layout.buildDirectory.dir('classes/java/main')
+    from(patchedClasses) {
+        include 'com/kraken/api/core/hooks/GameHooks.class'
+        include 'com/kraken/api/core/hooks/HooksLoader.class'
+        include 'com/kraken/api/core/interaction/timing/ClickScheduler.class'
+    }
     from sourceSets.main.output
-    from {
-        configurations.krakenBundle.collect { it.isDirectory() ? it : zipTree(it) }
+    from(configurations.krakenBundle.collect { zipTree(it) }) {
+        exclude 'com/kraken/api/service/ui/login/**'
+        exclude 'com/kraken/api/core/script/breakhandler/**'
+        exclude 'com/kraken/api/core/hooks/LoginHooks.class'
+        exclude 'com/kraken/api/core/hooks/GameHooks.class'
+        exclude 'com/kraken/api/core/hooks/HooksLoader.class'
+        exclude 'com/kraken/api/core/interaction/timing/ClickScheduler.class'
     }
     from('licenses') {
         into 'META-INF/licenses'
+        exclude 'NOTICE-java11.txt'
     }
     exclude 'shortestpath/**'
     exclude 'META-INF/*.SF'
@@ -109,6 +125,9 @@ tasks.register('shadedJarJava11', Jar) {
         exclude 'META-INF/**'
     }
     exclude 'kraken.png'
+    exclude 'com/kraken/api/service/ui/login/**'
+    exclude 'com/kraken/api/core/script/breakhandler/**'
+    exclude 'com/kraken/api/core/hooks/LoginHooks.class'
     from('licenses') {
         into 'META-INF/licenses'
         exclude 'NOTICE.txt'

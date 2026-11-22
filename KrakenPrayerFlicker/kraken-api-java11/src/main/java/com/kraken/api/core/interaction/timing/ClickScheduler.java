@@ -15,6 +15,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -141,7 +142,7 @@ public class ClickScheduler {
     @Inject
     public ClickScheduler(EventBus eventBus, Client client, ClickHistory clickHistory) {
         this(System::currentTimeMillis, new Random(), HumanClickGap.DEFAULT, clickHistory::getLastClickMillis,
-                clickHistory::getLastClickPoint, client::getAccountHash);
+                clickHistory::getLastClickPoint, () -> readAccountHash(client));
         eventBus.register(this);
     }
 
@@ -166,6 +167,20 @@ public class ClickScheduler {
         this.lastClickMillis = lastClickMillis;
         this.lastClickPoint = lastClickPoint;
         this.accountHash = accountHash;
+    }
+
+    /**
+     * Reads {@code Client.getAccountHash()} without naming the interface that declares it.
+     * A direct call compiles to that interface, and this jar must not contain that name.
+     * The method and its result are unchanged.
+     */
+    private static long readAccountHash(Client client) {
+        try {
+            Method method = Client.class.getMethod("getAccountHash");
+            return (Long) method.invoke(client);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Could not read the account hash", e);
+        }
     }
 
     /**

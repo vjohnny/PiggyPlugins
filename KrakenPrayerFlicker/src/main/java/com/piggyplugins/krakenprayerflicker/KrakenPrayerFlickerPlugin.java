@@ -26,8 +26,8 @@ import net.runelite.client.util.HotkeyListener;
  * of PacketUtils. Kraken API is GPL-3.0: https://github.com/Kraken-Plugins/kraken-api
  */
 @PluginDescriptor(
-        name = "<html><font color=\"#FF9DF9\">[PP]</font> Kraken Prayer Flicker</html>",
-        description = "Quick-prayer flicker by Ethan Vann (PiggyPlugins), using the Kraken API",
+        name = "[VJ]Prayer Flicker",
+        description = "[VJ]Prayer Flicker",
         enabledByDefault = false,
         tags = {"ethan", "kraken", "prayer"}
 )
@@ -102,10 +102,6 @@ public class KrakenPrayerFlickerPlugin extends Plugin {
                 event.consume();
                 switchAndUpdatePrayers(event.getParam0());
             }
-        }
-        if (config.minimapToggle() && event.getId() == 1 && event.getParam1() == InterfaceID.Orbs.PRAYERBUTTON) {
-            toggleFlicker();
-            event.consume();
         }
     }
 

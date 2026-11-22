@@ -32,8 +32,6 @@ public class HooksLoader {
 
     private static ReflectionHooks reflectionHooks;
 
-    private static LoginHooks loginHooks;
-
     private static SecurityHooks securityHooks;
 
     private static Exception loadFailure;
@@ -50,7 +48,7 @@ public class HooksLoader {
                     gson,
                     GameHooks.class
             );
-            if (gameHooks.getPackets() == null || gameHooks.getLoginHooks() == null || gameHooks.getReflectionHooks() == null || gameHooks.getSecurityHooks() == null) {
+            if (gameHooks.getPackets() == null || gameHooks.getReflectionHooks() == null || gameHooks.getSecurityHooks() == null) {
                 throw new IllegalStateException("Parsed hooks file was null.");
             }
 
@@ -58,8 +56,7 @@ public class HooksLoader {
                     .collect(Collectors.toMap(PacketDefinition::getName, p -> p));
             reflectionHooks = gameHooks.getReflectionHooks();
             securityHooks = gameHooks.getSecurityHooks();
-            loginHooks = gameHooks.getLoginHooks();
-            log.info("Loaded packet, reflection, security and login hooks from local resources (RuneLite {}, revision {}).",
+            log.info("Loaded packet, reflection and security hooks from local resources (RuneLite {}, revision {}).",
                     gameHooks.getRuneliteVersion(), gameHooks.getRevision());
         } catch (Exception e) {
             loadFailure = e;
@@ -82,8 +79,8 @@ public class HooksLoader {
     }
 
     /**
-     * Logs a warning when the running game revision differs from the revision hooks.json was mapped for. Reflection,
-     * login and packet hooks are only valid for the revision they were mapped from, so a mismatch usually means this
+     * Logs a warning when the running game revision differs from the revision hooks.json was mapped for. Reflection
+     * and packet hooks are only valid for the revision they were mapped from, so a mismatch usually means this
      * Kraken API version is older or newer than the running RuneLite client.
      *
      * @param clientRevision The revision reported by the running client, {@code Client.getRevision()}.
@@ -95,7 +92,7 @@ public class HooksLoader {
             return false;
         }
         log.warn("hooks.json was mapped for game revision {} (RuneLite {}) but the client is running revision {}. "
-                        + "Interactions, packets and login may fail; use the Kraken API release built for this RuneLite version.",
+                        + "Interactions and packets may fail; use the Kraken API release built for this RuneLite version.",
                 hooksRevision, gameHooks.getRuneliteVersion(), clientRevision);
         return true;
     }
@@ -131,17 +128,6 @@ public class HooksLoader {
     public static ReflectionHooks getReflectionHooks() {
         requireLoaded();
         return reflectionHooks;
-    }
-
-    /**
-     * Returns the login hooks.
-     *
-     * @return The parsed {@link LoginHooks}.
-     * @throws IllegalStateException If hooks.json failed to load.
-     */
-    public static LoginHooks getLoginHooks() {
-        requireLoaded();
-        return loginHooks;
     }
 
     /**

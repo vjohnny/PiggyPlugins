@@ -26,6 +26,13 @@ dependencies {
     compileOnly 'com.github.Kraken-Plugins:shortest-path:11d64616eb'
 }
 
+// Not compiled and not shipped. LoginService reads credentials.properties, and the
+// break-handler package exists to call it. LoginHooks is only used by that code.
+// The sources stay in this tree; see ../kraken-api-5.4.1-java11.patch.
+sourceSets.main.java.exclude 'com/kraken/api/service/ui/login/**'
+sourceSets.main.java.exclude 'com/kraken/api/core/script/breakhandler/**'
+sourceSets.main.java.exclude 'com/kraken/api/core/hooks/LoginHooks.java'
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.release = 11

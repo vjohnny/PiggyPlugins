@@ -19,13 +19,4 @@ public interface KrakenPrayerFlickerConfig extends Config {
     default Keybind toggle() {
         return Keybind.NOT_SET;
     }
-
-    @ConfigItem(
-            keyName = "minimapToggle",
-            name = "Toggle with Minimap Orb",
-            description = "Toggle using the Minimap Orb"
-    )
-    default boolean minimapToggle() {
-        return false;
-    }
 }
