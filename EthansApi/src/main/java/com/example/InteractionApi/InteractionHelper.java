@@ -2,12 +2,12 @@ package com.example.InteractionApi;
 
 import com.example.Packets.MousePackets;
 import com.example.Packets.WidgetPackets;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.gameval.InterfaceID;
 
 import java.util.List;
 
 public class InteractionHelper {
-    static private final int quickPrayerWidgetID = WidgetInfo.MINIMAP_QUICK_PRAYER_ORB.getPackedId();
+    static private final int quickPrayerWidgetID = InterfaceID.Orbs.PRAYERBUTTON;
 
     public static void toggleNormalPrayer(int packedWidgID) {
         MousePackets.queueClickPacket();
