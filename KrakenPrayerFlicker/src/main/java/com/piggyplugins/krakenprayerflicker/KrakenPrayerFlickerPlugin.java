@@ -44,7 +44,10 @@ public class KrakenPrayerFlickerPlugin extends Plugin {
     @Inject
     private KrakenPrayerFlickerConfig config;
 
-    private boolean toggle;
+    /**
+     * Written from the AWT thread (hotkey, plugin shutdown) and read on the client thread.
+     */
+    private volatile boolean toggle;
 
     @Provides
     public KrakenPrayerFlickerConfig getConfig(ConfigManager configManager) {
@@ -61,11 +64,9 @@ public class KrakenPrayerFlickerPlugin extends Plugin {
         log.info("Shutdown");
         keyManager.unregisterKeyListener(prayerToggle);
         toggle = false;
-        if (!loggedIn()) {
-            return;
-        }
-        // Matches EthanPrayerFlickerPlugin.shutDown: turn quick prayers off if they are on.
-        prayerService.disableQuickPrayers();
+        // PluginManager.stopPlugin runs on the EDT. disableQuickPrayers waits on the
+        // client thread, so hand it off instead of blocking shutdown.
+        disableQuickPrayersOnClientThread();
     }
 
     /**
@@ -130,22 +131,37 @@ public class KrakenPrayerFlickerPlugin extends Plugin {
 
     public void toggleFlicker() {
         toggle = !toggle;
-        if (!loggedIn()) {
-            return;
-        }
         if (!toggle) {
-            prayerService.disableQuickPrayers();
+            disableQuickPrayersOnClientThread();
         }
     }
 
     public void toggleFlicker(boolean on) {
         toggle = on;
-        if (!loggedIn()) {
+        if (!toggle) {
+            disableQuickPrayersOnClientThread();
+        }
+    }
+
+    /**
+     * {@link PrayerService#disableQuickPrayers()} reads quick-prayer state through
+     * {@code Context.runOnClientThread}, which blocks the caller for up to
+     * {@code Context.CLIENT_THREAD_TIMEOUT_MS}. The hotkey listener runs on the EDT,
+     * so that wait freezes the client. Queue the call when we are not already on the
+     * client thread. On the client thread, run it directly: Kraken's gateway executes
+     * inline there and does not wait.
+     */
+    private void disableQuickPrayersOnClientThread() {
+        Runnable disable = () -> {
+            if (loggedIn()) {
+                prayerService.disableQuickPrayers();
+            }
+        };
+        if (ctx.getClient().isClientThread()) {
+            disable.run();
             return;
         }
-        if (!toggle) {
-            prayerService.disableQuickPrayers();
-        }
+        ctx.getClientThread().invokeLater(disable);
     }
 
     private boolean loggedIn() {
