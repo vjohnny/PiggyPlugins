@@ -1,0 +1,16 @@
+archive-patch-applier 1.0.4 and archive-patch-shared 1.0.4
+Copyright (c) the archive-patcher authors
+
+Previously resolved from JCenter as:
+  com.google.archivepatcher:archive-patch-applier:1.0.4
+  com.google.archivepatcher:archive-patch-shared:1.0.4
+
+The published POM for this release identifies the project as
+https://github.com/lizhangqu/corepatch (a distribution of Google's
+archive-patcher) and declares the BSD 3-Clause License:
+https://opensource.org/licenses/BSD-3-Clause
+
+These jars are vendored because JCenter no longer serves them and the
+artifacts were never published to Maven Central. PacketUtils uses
+FileByFileV1DeltaApplier to apply RuneLite's own /client.patch when
+locating the obfuscated client packet writer.

@@ -11,17 +11,23 @@ allprojects {
             url = 'https://repo.runelite.net'
         }
         mavenCentral()
-        jcenter()
     }
 
-    def runeLiteVersion = '1.10.22'
+    // Latest official release tag: runelite-parent-1.13.7
+    // (master is 1.13.8-SNAPSHOT plus a non-API hunter plugin change).
+    def runeLiteVersion = '1.13.7'
 
     plugins.withType(JavaPlugin) {
+        tasks.withType(JavaCompile).configureEach {
+            options.encoding = 'UTF-8'
+            options.release = 11
+            options.compilerArgs.addAll(['-Xmaxerrs', '10000', '-Xmaxwarns', '10000'])
+        }
         dependencies {
-            compileOnly 'org.projectlombok:lombok:1.18.20'
-            annotationProcessor 'org.projectlombok:lombok:1.18.20'
+            compileOnly 'org.projectlombok:lombok:1.18.36'
+            annotationProcessor 'org.projectlombok:lombok:1.18.36'
             compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
-            testImplementation 'junit:junit:4.12'
+            testImplementation 'junit:junit:4.13.2'
             testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
             testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
         }
@@ -30,14 +36,11 @@ allprojects {
 
 dependencies {
     implementation project(path: ':AutoTitheFarm')
-    implementation project(path: ':AutoAerial')
     implementation project(path: ":AutoRuneDragons")
     implementation project(path: ':AutoBoner')
     implementation project(path: ':AutoChompy')
     implementation project(path: ':AutoCombat')
-    implementation project(path: ':AutoTrapper')
     implementation project(path: ':AutoSmith')
-    implementation project(path: ':ButterflyCatcher')
     implementation project(path: ':DialogueContinuer')
     implementation project(path: ':Firemaking')
     implementation project(path: ':KittenFeeder')
@@ -73,6 +76,10 @@ dependencies {
     implementation project(path: ':VardorvisHelper')
     implementation project(path: ':DropParty')
     implementation project(path: ':BetterProfiles')
+    implementation project(path: ':AoeWarn')
+    implementation project(path: ':PolyHunter')
+    implementation project(path: ':PathingTesting')
+    implementation project(path: ':ScurriusSpines')
     implementation 'io.reactivex.rxjava3:rxjava:3.1.6'
 }
 
@@ -89,13 +96,12 @@ sourceSets {
 
 group = 'com.piggyplugins'
 version = '1.1.0'
-sourceCompatibility = "11"
 
 task FatJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.example.Main'
     }
-    baseName = 'piggy-plugins-aio'
+    archiveBaseName = 'piggy-plugins-aio'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
@@ -137,7 +143,3 @@ publishing {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-}
-targetCompatibility = JavaVersion.VERSION_11
