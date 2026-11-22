@@ -29,7 +29,7 @@ test {
 task PiggyJar(type: Jar) {
     manifest {
     }
-    baseName = 'item-dropper'
+    archiveBaseName = 'item-dropper'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar

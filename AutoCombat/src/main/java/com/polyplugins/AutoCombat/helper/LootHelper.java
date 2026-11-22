@@ -77,7 +77,8 @@ public class LootHelper {
         if (lootCache.containsKey(name)) {
             return lootCache.get(name);
         }
-        int price = itemManager.search(name).get(0).getWikiPrice();
+        long wikiPrice = itemManager.search(name).get(0).getWikiPrice();
+        int price = wikiPrice > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) wikiPrice;
         lootCache.put(name, price);
         return price;
     }

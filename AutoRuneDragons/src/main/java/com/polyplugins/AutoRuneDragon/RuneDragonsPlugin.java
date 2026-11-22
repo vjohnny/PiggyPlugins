@@ -590,7 +590,7 @@ public class RuneDragonsPlugin extends Plugin {
         TileItem item = event.getItem();
         Tile tile = event.getTile();
         int haValue = client.getItemDefinition(item.getId()).getHaPrice();
-        int itemPrice = itemManager.getItemPrice(item.getId()) * item.getQuantity();
+        long itemPrice = itemManager.getItemPrice(item.getId()) * item.getQuantity();
         return (tile.getWorldLocation().equals(deathLocation) || tile.getWorldLocation().distanceTo(deathLocation) <= 2) && (itemPrice >= config.lootValue() || haValue >= config.lootValue());
     }
 
@@ -982,9 +982,9 @@ public class RuneDragonsPlugin extends Plugin {
             TileItem lootItem = item.getItem();
             MousePackets.queueClickPacket();
             TileItemPackets.queueTileItemAction(new ETileItem(lootTile.getWorldLocation(), lootItem), false);
-            int itemPrice = itemManager.getItemPrice(lootItem.getId()) * lootItem.getQuantity();
+            long itemPrice = itemManager.getItemPrice(lootItem.getId()) * lootItem.getQuantity();
             if (itemPrice > 0) {
-                updateLoot(itemPrice);
+                updateLoot(itemPrice > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) itemPrice);
             }
         }
         timeout = tickDelay();

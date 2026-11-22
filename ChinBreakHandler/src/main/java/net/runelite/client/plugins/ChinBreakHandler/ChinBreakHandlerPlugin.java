@@ -40,6 +40,7 @@ import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.WorldUtil;
 import net.runelite.http.api.worlds.World;
+import net.runelite.http.api.worlds.WorldRegion;
 import net.runelite.http.api.worlds.WorldResult;
 import net.runelite.http.api.worlds.WorldType;
 import org.apache.commons.lang3.tuple.Pair;
@@ -404,7 +405,7 @@ public class ChinBreakHandlerPlugin extends Plugin {
             state = State.LOGOUT_TAB;
         } else if (state == State.LOGOUT_TAB) {
             // Logout tab
-            if (client.getVar(VarClientInt.INVENTORY_TAB) != 10) {
+            if (client.getVarcIntValue(VarClientInt.INVENTORY_TAB) != 10) {
                 client.runScript(915, 10);
             }
 
@@ -428,7 +429,7 @@ public class ChinBreakHandlerPlugin extends Plugin {
             delay = new IntRandomNumberGenerator(20, 25).nextInt();
         } else if (state == State.INVENTORY) {
             // Inventory
-            if (client.getVar(VarClientInt.INVENTORY_TAB) != 3) {
+            if (client.getVarcIntValue(VarClientInt.INVENTORY_TAB) != 3) {
                 client.runScript(915, 3);
             }
             state = State.RESUME;
@@ -679,15 +680,18 @@ public class ChinBreakHandlerPlugin extends Plugin {
         }
 
         if (currentWorldTypes.equals(types)) {
-            int worldLocation = world.getLocation();
+            WorldRegion worldRegion = world.getRegion();
+            if (worldRegion == null) {
+                return null;
+            }
 
-            if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "american")) && worldLocation == 0) {
+            if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "american")) && worldRegion == WorldRegion.UNITED_STATES_OF_AMERICA) {
                 return world;
-            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "united-kingdom")) && worldLocation == 1) {
+            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "united-kingdom")) && worldRegion == WorldRegion.UNITED_KINGDOM) {
                 return world;
-            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "australian")) && worldLocation == 3) {
+            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "australian")) && worldRegion == WorldRegion.AUSTRALIA) {
                 return world;
-            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "german")) && worldLocation == 7) {
+            } else if (Boolean.parseBoolean(configManager.getConfiguration("piggyBreakHandler", "german")) && worldRegion == WorldRegion.GERMANY) {
                 return world;
             }
         }
@@ -758,7 +762,7 @@ public class ChinBreakHandlerPlugin extends Plugin {
         rsWorld.setAddress(world.getAddress());
         rsWorld.setId(world.getId());
         rsWorld.setPlayerCount(world.getPlayers());
-        rsWorld.setLocation(world.getLocation());
+        rsWorld.setLocation(world.getRegion() == null ? 0 : world.getRegion().getId());
         rsWorld.setTypes(WorldUtil.toWorldTypes(world.getTypes()));
 
         if (client.getGameState() == GameState.LOGIN_SCREEN) {

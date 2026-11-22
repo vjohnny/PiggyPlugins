@@ -101,46 +101,20 @@ public class EthanApiPlugin extends Plugin {
         return client.getLocalPlayer().getWorldLocation();
     }
 
-    public static SkullIcon getSkullIcon(Player player) {
-        Field skullField = null;
-        try {
-            skullField = player.getClass().getDeclaredField("al");
-            skullField.setAccessible(true);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+    /**
+     * Skull icon id from {@link Player#getSkullIcon()}, or null when the player has no skull.
+     * {@link SkullIcon} is a set of int constants in current RuneLite (it is no longer an enum),
+     * and the old obfuscated field read does not match the current client.
+     */
+    public static Integer getSkullIcon(Player player) {
+        if (player == null) {
             return null;
         }
-        int var1 = -1;
-        try {
-            var1 = skullField.getInt(player) * 220135685;
-            skullField.setAccessible(false);
-        } catch (IllegalAccessException | NullPointerException e) {
-            e.printStackTrace();
+        int skull = player.getSkullIcon();
+        if (skull == SkullIcon.NONE) {
+            return null;
         }
-        switch (var1) {
-            case 0:
-                return SkullIcon.SKULL;
-            case 1:
-                return SkullIcon.SKULL_FIGHT_PIT;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            default:
-                return null;
-            case 8:
-                return SkullIcon.DEAD_MAN_FIVE;
-            case 9:
-                return SkullIcon.DEAD_MAN_FOUR;
-            case 10:
-                return SkullIcon.DEAD_MAN_THREE;
-            case 11:
-                return SkullIcon.DEAD_MAN_TWO;
-            case 12:
-                return SkullIcon.DEAD_MAN_ONE;
-        }
+        return skull;
     }
 
     public static boolean isQuickPrayerActive(QuickPrayer prayer) {

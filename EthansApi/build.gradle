@@ -5,7 +5,10 @@ plugins {
 dependencies {
     implementation 'org.json:json:20230227'
     implementation 'org.roaringbitmap:RoaringBitmap:0.9.44'
-    implementation("com.google.archivepatcher:archive-patch-applier:1.0.4")
+    // archive-patch-applier 1.0.4 was only published to JCenter. The jars in libs/
+    // are that release (applier + its shared runtime dependency) so the build
+    // still resolves after JCenter shut down.
+    implementation files('libs/archive-patch-applier-1.0.4.jar', 'libs/archive-patch-shared-1.0.4.jar')
     implementation("org.benf:cfr:0.152")
 }
 
@@ -31,7 +34,7 @@ task PiggyJar(type: Jar) {
     manifest {
         attributes 'Main-Class': 'com.example.Main'
     }
-    baseName = 'ethan-api-standalone'
+    archiveBaseName = 'ethan-api-standalone'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar

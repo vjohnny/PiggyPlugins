@@ -767,6 +767,51 @@ public class BankItemWidget implements Widget {
     }
 
     @Override
+    public String[][] getSubOps() {
+        return null;
+    }
+
+    @Override
+    public void setSubOp(int index, int subop, String option) {
+    }
+
+    @Override
+    public void clearActions() {
+    }
+
+    @Override
+    public boolean isFlippedVertically() {
+        return false;
+    }
+
+    @Override
+    public void setFlippedVertically(boolean flip) {
+    }
+
+    @Override
+    public boolean isFlippedHorizontally() {
+        return false;
+    }
+
+    @Override
+    public void setFlippedHorizontally(boolean flip) {
+    }
+
+    @Override
+    public int getTargetPriority() {
+        return 0;
+    }
+
+    @Override
+    public void setTargetPriority(int priority) {
+    }
+
+    @Override
+    public int[] getVarTransmitTrigger() {
+        return null;
+    }
+
+    @Override
     public void setVarTransmitTrigger(int... trigger) {
 
     }

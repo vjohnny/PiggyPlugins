@@ -11,10 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.Skill;
-import net.runelite.api.Varbits;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.api.gameval.InterfaceID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -48,7 +48,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
     private PrayerFlickerConfig config;
     @Inject
     PluginManager pluginManager;
-    private final int quickPrayerWidgetID = WidgetInfo.MINIMAP_QUICK_PRAYER_ORB.getPackedId();
+    private final int quickPrayerWidgetID = InterfaceID.Orbs.PRAYERBUTTON;
 
     @Provides
     public PrayerFlickerConfig getConfig(ConfigManager configManager) {
@@ -87,7 +87,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
         }
         clientThread.invoke(() ->
         {
-            if (client.getVarbitValue(Varbits.QUICK_PRAYER) == 1) {
+            if (client.getVarbitValue(VarbitID.QUICKPRAYER_ACTIVE) == 1) {
                 togglePrayer();
             }
         });
@@ -97,7 +97,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
 
     public void switchAndUpdatePrayers(int i) {
         MousePackets.queueClickPacket();
-        WidgetPackets.queueWidgetActionPacket(1, 5046276, -1, i);
+        WidgetPackets.queueWidgetActionPacket(1, InterfaceID.Quickprayer.BUTTONS, -1, i);
         togglePrayer();
         togglePrayer();
     }
@@ -110,7 +110,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
     @Subscribe
     public void onMenuOptionClicked(MenuOptionClicked event) {
         if (toggle) {
-            if (event.getParam1() == 5046276) {
+            if (event.getParam1() == InterfaceID.Quickprayer.BUTTONS) {
                 if (event.getMenuOption().equals("Quick Prayer Update")) {
                     updatePrayers();
                     event.consume();
@@ -120,7 +120,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
                 switchAndUpdatePrayers(event.getParam0());
             }
         }
-        if (config.minimapToggle() && event.getId() == 1 && event.getParam1() == WidgetInfo.MINIMAP_QUICK_PRAYER_ORB.getId()) {
+        if (config.minimapToggle() && event.getId() == 1 && event.getParam1() == InterfaceID.Orbs.PRAYERBUTTON) {
             toggleFlicker();
             event.consume();
         }
@@ -134,7 +134,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
 
         if (toggle) {
             if (client.getBoostedSkillLevel(Skill.PRAYER) < 1) return;
-            if (client.getVarbitValue(Varbits.QUICK_PRAYER) == 1) {
+            if (client.getVarbitValue(VarbitID.QUICKPRAYER_ACTIVE) == 1) {
                 togglePrayer();
             }
             togglePrayer();
@@ -156,7 +156,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
         if (!toggle) {
             clientThread.invoke(() ->
             {
-                if (client.getVarbitValue(Varbits.QUICK_PRAYER) == 1) {
+                if (client.getVarbitValue(VarbitID.QUICKPRAYER_ACTIVE) == 1) {
                     togglePrayer();
                 }
             });
@@ -171,7 +171,7 @@ public class EthanPrayerFlickerPlugin extends Plugin {
         if (!toggle) {
             clientThread.invoke(() ->
             {
-                if (client.getVarbitValue(Varbits.QUICK_PRAYER) == 1) {
+                if (client.getVarbitValue(VarbitID.QUICKPRAYER_ACTIVE) == 1) {
                     togglePrayer();
                 }
             });
